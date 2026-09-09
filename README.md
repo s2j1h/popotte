@@ -61,32 +61,47 @@ Un seul service, exposé sur le port 8000, avec un volume `popotte-data` monté 
 (base SQLite + photos). À raccorder ensuite dans Nginx Proxy Manager vers
 `recettes.lehavre.igny`.
 
+### Avec Portainer
+
+*Stacks → Add stack → **Repository***, en pointant sur ce dépôt et sur
+`docker-compose.yml`. Le clone effectué par Portainer fournit le contexte de build
+qu'exige `build: .` — l'éditeur web, lui, ne peut pas le fournir et le déploiement
+échouerait. Les variables du tableau ci-dessous se règlent dans l'écran
+« Environment variables » de la stack.
+
+Nommez la stack **`popotte`** : le volume est préfixé par le nom de la stack, donc
+la nommer autrement crée un volume distinct et l'application repart sur une base vide.
+
 ### Configuration
 
-La configuration passe par des variables d'environnement, toutes optionnelles. Pour les
-personnaliser en déploiement, copier le modèle fourni :
+Trois variables sont exposées par le compose, toutes optionnelles :
+
+| Variable | Défaut | Rôle |
+|---|---|---|
+| `TZ` | `Europe/Paris` | fuseau du conteneur, utilisé pour dater les listes |
+| `POPOTTE_SEED_DEMO` | `1` | `0` pour démarrer sans les recettes d'exemple |
+| `POPOTTE_SECRET_KEY` | générée et persistée | clé de session (mémorise le panier en cours) |
+
+En ligne de commande, on les place dans un `.env` à côté du `docker-compose.yml` :
 
 ```bash
 cp .env.example .env
 ```
 
-Compose lit ce fichier s'il existe et l'injecte dans le conteneur ; sans lui, les valeurs
-par défaut s'appliquent. Le `.env` n'est pas versionné (il peut contenir la clé de session),
-contrairement à `.env.example` qui documente les variables disponibles.
+Sous Portainer, on les saisit dans l'écran « Environment variables » de la stack. Dans
+les deux cas, elles alimentent le même mécanisme d'interpolation du fichier compose. Le
+`.env` n'est pas versionné (il peut contenir la clé de session), contrairement à
+`.env.example` qui documente les variables disponibles.
 
-| Variable | Défaut | Rôle |
-|---|---|---|
-| `TZ` | `Europe/Paris` | fuseau du conteneur, utilisé pour dater les listes |
-| `POPOTTE_DATA_DIR` | `/data` (Docker), `./data` (local) | base SQLite, photos, clé de session |
-| `POPOTTE_SEED_DEMO` | `1` | `0` pour démarrer sans les recettes d'exemple |
-| `POPOTTE_SECRET_KEY` | générée et persistée | clé de session (mémorise le panier en cours) |
-| `POPOTTE_DATABASE_URL` | `sqlite:///$POPOTTE_DATA_DIR/popotte.db` | URL SQLAlchemy |
-| `POPOTTE_DEBUG` | — | `1` pour le rechargement automatique en développement |
-| `PORT` / `HOST` | `8000` / `127.0.0.1` | serveur de développement uniquement |
+D'autres réglages existent (`POPOTTE_DATA_DIR`, `POPOTTE_DATABASE_URL`, `POPOTTE_DEBUG`,
+`HOST`, `PORT`) mais ne sont volontairement pas exposés par le compose : `/data` est figé
+côté image et correspond au volume monté. Ils ne servent qu'en développement local, en
+préfixant la commande — le `.env` n'y est pas lu automatiquement, il n'y a pas de
+dépendance `python-dotenv` :
 
-En développement local, le `.env` n'est pas lu automatiquement (pas de dépendance
-`python-dotenv`) : préfixer la commande suffit, par exemple
-`POPOTTE_DEBUG=1 .venv/bin/python wsgi.py`.
+```bash
+POPOTTE_DEBUG=1 .venv/bin/python wsgi.py
+```
 
 ### Sauvegarde et mise à jour
 

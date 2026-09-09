@@ -1,20 +1,32 @@
 # Un seul service : l'application sert le HTML, les fragments HTMX et les photos.
 # Reverse-proxy assuré par Nginx Proxy Manager (recettes.lehavre.igny).
+#
+# Déploiement Portainer : Stacks -> Add stack -> Repository, en pointant sur ce
+# dépôt (le clone fournit le contexte de build exigé par `build: .`, que
+# l'éditeur web ne peut pas fournir). Les variables ci-dessous se règlent alors
+# dans l'écran « Environment variables » de la stack.
+#
+# Déploiement en ligne de commande : `cp .env.example .env` puis
+# `docker compose up -d --build` — Compose lit le .env du dossier pour ces
+# mêmes variables.
 services:
   popotte:
     build: .
     image: popotte:latest
-    container_name: popotte
     restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
+      # Base SQLite + photos. Le nom réel du volume est préfixé par le nom de
+      # la stack : nommer la stack « popotte » donne « popotte_popotte-data ».
       - popotte-data:/data
-    # Configuration optionnelle : `cp .env.example .env` puis adapter.
-    # Sans ce fichier, les valeurs par défaut de l'image s'appliquent.
-    env_file:
-      - path: .env
-        required: false
+    environment:
+      # Fuseau du conteneur : sert à dater les listes de courses.
+      TZ: ${TZ:-Europe/Paris}
+      # 0 pour démarrer sans les recettes d'exemple (base vide uniquement).
+      POPOTTE_SEED_DEMO: ${POPOTTE_SEED_DEMO:-1}
+      # Laissée vide : générée et persistée dans le volume au premier démarrage.
+      POPOTTE_SECRET_KEY: ${POPOTTE_SECRET_KEY:-}
 
 volumes:
   popotte-data:
