@@ -143,3 +143,14 @@ def test_page_inconnue(client):
     response = client.get("/recipes/9999")
     assert response.status_code == 404
     assert "existe pas" in response.get_data(as_text=True).replace("&#39;", "'")
+
+
+def test_portions_sans_decimales_a_peser(client, app):
+    """200 g de farine pour 6 portions -> 234 g pour 7, pas 233,33 g."""
+    recipe = db.scalar(select(Recipe).where(Recipe.title == "Gâteau au yaourt"))
+    body = client.get(f"/recipes/{recipe.id}/ingredients?servings=7", headers=HX).get_data(
+        as_text=True
+    )
+    assert "234 g" in body
+    assert "233" not in body
+    assert "4 pièce" not in body and "3,5" not in body  # 3 œufs -> 4, jamais 3,5

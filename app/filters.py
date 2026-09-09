@@ -5,7 +5,7 @@ from __future__ import annotations
 from flask import Flask
 
 from .models import CATEGORIES, CATEGORY_COLORS, CATEGORY_LABELS
-from .units import UNIT_CHOICES, format_amount, format_quantity, round_purchase, unit_def
+from .units import UNIT_CHOICES, format_amount, format_quantity, round_purchase
 
 
 def register(app: Flask) -> None:
@@ -19,10 +19,10 @@ def register(app: Flask) -> None:
     def scaled_amount(quantity, unit=""):
         """Quantité d'une recette ramenée à un nombre de portions.
 
-        Les unités dénombrables sont arrondies à l'entier supérieur : on ne
-        cuisine pas avec 7,5 œufs.
+        Toujours arrondie au supérieur, avec la même règle que la liste de
+        courses : pas de 7,5 œufs ni de 233,33 g de farine à peser.
         """
-        if quantity is not None and unit_def(unit).countable:
+        if quantity is not None:
             quantity = round_purchase(quantity, unit)
         return format_amount(quantity, unit)
 
