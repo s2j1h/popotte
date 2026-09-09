@@ -27,10 +27,10 @@ RUN useradd --create-home --uid 1000 popotte \
 USER popotte
 VOLUME ["/data"]
 
-EXPOSE 8000
+EXPOSE 7000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/healthz')"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7000/healthz')"
 
 # 2 workers suffisent largement pour un usage mono-foyer ; SQLite est en WAL.
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "4", \
+CMD ["gunicorn", "--bind", "0.0.0.0:7000", "--workers", "2", "--threads", "4", \
      "--timeout", "60", "--access-logfile", "-", "wsgi:app"]
