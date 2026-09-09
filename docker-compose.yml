@@ -15,7 +15,7 @@ services:
     image: popotte:latest
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "7000:7000"
     volumes:
       # Base SQLite + photos. Le nom réel du volume est préfixé par le nom de
       # la stack : nommer la stack « popotte » donne « popotte_popotte-data ».
