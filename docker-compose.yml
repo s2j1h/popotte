@@ -1,0 +1,20 @@
+# Un seul service : l'application sert le HTML, les fragments HTMX et les photos.
+# Reverse-proxy assuré par Nginx Proxy Manager (recettes.lehavre.igny).
+services:
+  popotte:
+    build: .
+    image: popotte:latest
+    container_name: popotte
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - popotte-data:/data
+    # Configuration optionnelle : `cp .env.example .env` puis adapter.
+    # Sans ce fichier, les valeurs par défaut de l'image s'appliquent.
+    env_file:
+      - path: .env
+        required: false
+
+volumes:
+  popotte-data:

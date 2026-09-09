@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Listes de courses · popotte{% endblock %}
+
+{% block content %}
+  <h1 class="font-display text-3xl">Listes de courses</h1>
+  <p class="pop-muted mb-5 mt-1 text-sm">Historique des listes générées.</p>
+
+  {% if lists %}
+    <div class="space-y-3">
+      {% for shopping_list in lists %}
+        {% set total = shopping_list.items | length %}
+        <div class="pop-card flex flex-wrap items-center gap-4 p-4">
+          <div class="min-w-0 flex-1">
+            <a
+              href="{{ url_for('shopping.show_list', list_id=shopping_list.id) }}"
+              class="font-medium hover:underline"
+              >{{ shopping_list.created_at.strftime('%d/%m/%Y à %H:%M') }}</a
+            >
+            <p class="pop-muted text-xs">
+              {{ shopping_list.selections | length }} recette{{ 's' if shopping_list.selections | length > 1 }}
+              · {{ total }} article{{ 's' if total > 1 }}
+              · {{ shopping_list.checked_count }} coché{{ 's' if shopping_list.checked_count > 1 }}
+            </p>
+          </div>
+          <a
+            href="{{ url_for('shopping.show_list', list_id=shopping_list.id) }}"
+            class="btn btn-ghost btn-sm rounded-full border border-base-300"
+            >Ouvrir</a
+          >
+          <button
+            class="btn btn-ghost btn-sm rounded-full text-error"
+            hx-post="{{ url_for('shopping.delete_list', list_id=shopping_list.id) }}"
+            hx-confirm="Supprimer cette liste ?"
+          >
+            Supprimer
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="pop-card p-10 text-center">
+      <p class="font-display text-xl">Aucune liste</p>
+      <p class="pop-muted mt-2 text-sm">Générez-en une depuis le panier.</p>
+      <a href="{{ url_for('shopping.basket') }}" class="btn btn-primary mt-4 rounded-full">Voir le panier</a>
+    </div>
+  {% endif %}
+{% endblock %}

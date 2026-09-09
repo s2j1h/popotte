@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Modifier' if recipe else 'Nouvelle recette' }} · popotte{% endblock %}
+
+{% block content %}
+  <a
+    href="{{ url_for('recipes.detail', recipe_id=recipe.id) if recipe else url_for('recipes.list_recipes') }}"
+    class="pop-muted text-sm hover:underline"
+    >← {{ recipe.title if recipe else 'Recettes' }}</a
+  >
+
+  <h1 class="font-display mt-2 text-3xl">
+    {{ 'Modifier la recette' if recipe else 'Nouvelle recette' }}
+  </h1>
+
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="form-long mt-5 grid gap-6 lg:grid-cols-[1fr_20rem]"
+    action="{{ url_for('recipes.edit', recipe_id=recipe.id) if recipe else url_for('recipes.new') }}"
+  >
+    <div class="space-y-6">
+      <section class="pop-card space-y-4 p-6">
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="title">Titre</label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            value="{{ values.title }}"
+            required
+            class="input input-bordered w-full bg-base-100"
+            placeholder="Ex. Gratin de courgettes"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="mb-1 block text-sm font-medium" for="servings">Portions</label>
+            <input
+              id="servings"
+              type="number"
+              name="servings"
+              min="1"
+              max="50"
+              value="{{ values.servings }}"
+              class="input input-bordered w-full bg-base-100"
+            />
+          </div>
+          <div>
+            <label class="mb-1 block text-sm font-medium" for="prep_minutes">Durée (min)</label>
+            <input
+              id="prep_minutes"
+              type="number"
+              name="prep_minutes"
+              min="0"
+              max="1440"
+              value="{{ values.prep_minutes }}"
+              class="input input-bordered w-full bg-base-100"
+              placeholder="30"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium" for="tags">Tags</label>
+          <input
+            id="tags"
+            type="text"
+            name="tags"
+            value="{{ values.tags }}"
+            class="input input-bordered w-full bg-base-100"
+            placeholder="végé, rapide"
+          />
+          <p class="pop-muted mt-1 text-xs">Séparés par des virgules.</p>
+        </div>
+      </section>
+
+      <section class="pop-card p-6">
+        <h2 class="font-display text-xl">Ingrédients</h2>
+        <p class="pop-muted mt-1 text-xs">
+          Laissez la quantité vide pour « au goût » (sel, poivre). L'unité est conservée telle
+          qu'écrite : la conversion n'a lieu qu'au moment des courses.
+        </p>
+
+        <div id="ing-rows" class="mt-4 space-y-2">
+          {% for row in rows %}{% include 'recipes/_form_row.html' %}{% endfor %}
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm mt-3 rounded-full border border-base-300"
+          hx-get="{{ url_for('recipes.ingredient_row') }}"
+          hx-target="#ing-rows"
+          hx-swap="beforeend"
+        >
+          + Ajouter un ingrédient
+        </button>
+      </section>
+
+      <section class="pop-card p-6">
+        <h2 class="font-display text-xl">Préparation</h2>
+        <p class="pop-muted mt-1 text-xs">Une étape par ligne — c'est ce découpage qui alimente le mode cuisine.</p>
+        <textarea
+          name="instructions"
+          rows="12"
+          class="textarea textarea-bordered mt-3 w-full bg-base-100 text-base leading-relaxed"
+          placeholder="Préchauffer le four à 180 °C.&#10;Émincer les oignons...">{{ values.instructions }}</textarea
+        >
+      </section>
+    </div>
+
+    <aside class="space-y-4 lg:sticky lg:top-24 lg:self-start">
+      <section class="pop-card p-6">
+        <h2 class="font-display text-xl">Photo</h2>
+        {% if recipe and recipe.photo_url %}
+          <img
+            src="{{ url_for('recipes.uploaded_photo', filename=recipe.photo_url) }}"
+            alt=""
+            class="mt-3 h-40 w-full rounded-xl object-cover"
+          />
+          <label class="mt-3 flex items-center gap-2 text-sm">
+            <input type="checkbox" name="remove_photo" value="1" class="checkbox checkbox-sm" />
+            Supprimer la photo actuelle
+          </label>
+        {% else %}
+          <div class="pop-thumb mt-3 h-40 w-full rounded-xl"></div>
+        {% endif %}
+        <input
+          type="file"
+          name="photo"
+          accept="image/*"
+          class="file-input file-input-bordered mt-3 w-full bg-base-100"
+        />
+        <p class="pop-muted mt-1 text-xs">Redimensionnée automatiquement, 16 Mo max.</p>
+      </section>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary flex-1 rounded-full">Enregistrer</button>
+        <a
+          href="{{ url_for('recipes.detail', recipe_id=recipe.id) if recipe else url_for('recipes.list_recipes') }}"
+          class="btn btn-ghost rounded-full border border-base-300"
+          >Annuler</a
+        >
+      </div>
+    </aside>
+  </form>
+
+  <datalist id="ingredient-names">
+    {% for ingredient in all_ingredients %}<option value="{{ ingredient.name }}"></option>{% endfor %}
+  </datalist>
+  <datalist id="unit-names">
+    {% for unit in UNIT_CHOICES %}{% if unit %}<option value="{{ unit }}"></option>{% endif %}{% endfor %}
+  </datalist>
+{% endblock %}

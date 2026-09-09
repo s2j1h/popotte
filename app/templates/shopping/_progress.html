@@ -1,0 +1,18 @@
+{% set total = shopping_list.items | length %}
+{% set done = shopping_list.checked_count %}
+<div
+  id="list-progress"
+  class="pop-muted text-sm"
+  {% if oob %}hx-swap-oob="true"{% endif %}
+>
+  {{ done }} / {{ total }} article{{ 's' if total > 1 }} coché{{ 's' if done > 1 }}
+  <span
+    class="ml-2 inline-block h-1.5 w-24 overflow-hidden rounded-full align-middle"
+    style="background-color: var(--pop-line)"
+  >
+    <span
+      class="block h-full rounded-full"
+      style="width: {{ (100 * done / total) | round if total else 0 }}%; background-color: var(--pop-sage)"
+    ></span>
+  </span>
+</div>

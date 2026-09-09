@@ -1,0 +1,36 @@
+{# Bouton "ajouter au panier" + mise à jour hors-cible des compteurs de navigation #}
+{% if style == 'detail' %}
+  <button
+    class="btn rounded-full {{ 'btn-secondary' if in_selection else 'btn-outline' }}"
+    hx-post="{{ url_for('shopping.toggle_selection', recipe_id=recipe.id) }}?style=detail"
+    hx-swap="outerHTML"
+  >
+    {% if in_selection %}✓ Dans le panier{% else %}Ajouter à ma liste de courses{% endif %}
+  </button>
+{% else %}
+  <button
+    class="btn btn-sm rounded-full {{ 'btn-secondary' if in_selection else 'btn-ghost border border-base-300' }}"
+    hx-post="{{ url_for('shopping.toggle_selection', recipe_id=recipe.id) }}"
+    hx-swap="outerHTML"
+    aria-pressed="{{ 'true' if in_selection else 'false' }}"
+    title="{{ 'Retirer du panier' if in_selection else 'Ajouter au panier' }}"
+  >
+    {% if in_selection %}✓ Sélectionnée{% else %}+ Panier{% endif %}
+  </button>
+{% endif %}
+
+{# compteurs de navigation : mis à jour hors-cible, uniquement en réponse HTMX #}
+{% if request.headers.get('HX-Request') %}
+<span
+  id="selection-badge"
+  hx-swap-oob="true"
+  class="ml-1 min-w-5 justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-white {{ 'inline-flex' if selection_count else 'hidden' }}"
+  >{{ selection_count }}</span
+>
+<span
+  id="selection-badge-mobile"
+  hx-swap-oob="true"
+  class="rounded-full bg-primary px-1.5 text-[0.65rem] font-semibold text-white {{ 'inline-block' if selection_count else 'hidden' }}"
+  >{{ selection_count }}</span
+>
+{% endif %}

@@ -1,0 +1,60 @@
+{# Mode cuisine : une étape à la fois, rien d'autre à l'écran #}
+<div id="cook-screen" class="cook-screen flex flex-col">
+  <div class="flex items-center justify-between px-6 pt-6 sm:px-10">
+    <span class="text-sm tracking-wide" style="color: rgba(239, 234, 224, 0.6)">
+      Étape {{ step }} / {{ steps | length }}
+    </span>
+    <a
+      href="{{ url_for('recipes.detail', recipe_id=recipe.id, servings=servings) }}"
+      class="cook-round"
+      style="width: 3rem; height: 3rem; font-size: 1.25rem"
+      aria-label="Quitter le mode cuisine"
+      >✕</a
+    >
+  </div>
+
+  <div class="flex flex-1 items-center px-6 py-8 sm:px-10">
+    <p class="cook-text">{{ steps[step - 1] }}</p>
+  </div>
+
+  <div class="flex items-center justify-between gap-4 px-6 pb-10 sm:px-10">
+    <button
+      class="cook-round"
+      hx-get="{{ url_for('recipes.cook', recipe_id=recipe.id, step=step - 1, servings=servings) }}"
+      hx-target="#cook-screen"
+      hx-swap="outerHTML"
+      {{ 'disabled' if step <= 1 }}
+      aria-label="Étape précédente"
+    >
+      ←
+    </button>
+
+    <div class="flex flex-1 justify-center gap-2">
+      {% for index in range(1, (steps | length) + 1) %}
+        <span
+          class="h-2 rounded-full transition-all"
+          style="width: {{ '2.5rem' if index == step else '0.5rem' }}; background-color: {{ 'var(--pop-apricot)' if index == step else 'rgba(239,234,224,0.28)' }}"
+        ></span>
+      {% endfor %}
+    </div>
+
+    {% if step < steps | length %}
+      <button
+        class="cook-round cook-round-primary"
+        hx-get="{{ url_for('recipes.cook', recipe_id=recipe.id, step=step + 1, servings=servings) }}"
+        hx-target="#cook-screen"
+        hx-swap="outerHTML"
+        aria-label="Étape suivante"
+      >
+        →
+      </button>
+    {% else %}
+      <a
+        href="{{ url_for('recipes.detail', recipe_id=recipe.id, servings=servings) }}"
+        class="cook-round cook-round-primary"
+        aria-label="Terminer"
+        >✓</a
+      >
+    {% endif %}
+  </div>
+</div>

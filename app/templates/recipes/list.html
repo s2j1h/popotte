@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Recettes · popotte{% endblock %}
+
+{% block content %}
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="font-display text-3xl">Recettes</h1>
+      <p class="pop-muted mt-1 text-sm">
+        {{ recipes | length }} recette{{ 's' if recipes | length != 1 }} au catalogue
+        {%- if selection_count %} · {{ selection_count }} dans le panier{% endif %}
+      </p>
+    </div>
+
+    <form
+      class="w-full sm:w-72"
+      hx-get="{{ url_for('recipes.list_recipes') }}"
+      hx-target="#recipe-grid"
+      hx-trigger="input changed delay:300ms from:find input, search from:find input"
+      hx-vals='{"fragment": "1"}'
+      onsubmit="return false"
+    >
+      <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="Chercher une recette ou un ingrédient"
+        class="input input-bordered w-full rounded-full bg-base-100"
+      />
+    </form>
+  </div>
+
+  {% if selection_count %}
+    <div class="pop-card mb-5 flex flex-wrap items-center gap-3 p-4">
+      <span class="text-sm">
+        <strong>{{ selection_count }}</strong> recette{{ 's' if selection_count > 1 }} sélectionnée{{ 's' if selection_count > 1 }}
+      </span>
+      <a href="{{ url_for('shopping.basket') }}" class="btn btn-primary btn-sm ml-auto rounded-full"
+        >Voir le panier</a
+      >
+    </div>
+  {% endif %}
+
+  <div id="recipe-grid">{% include 'recipes/_grid.html' %}</div>
+{% endblock %}

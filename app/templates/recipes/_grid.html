@@ -1,0 +1,13 @@
+{% if recipes %}
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for recipe in recipes %}{% include 'recipes/_card.html' %}{% endfor %}
+  </div>
+{% else %}
+  <div class="pop-card p-10 text-center">
+    <p class="font-display text-xl">Aucune recette</p>
+    <p class="pop-muted mt-2 text-sm">
+      {% if query %}Rien ne correspond à « {{ query }} ».{% else %}Commencez par en créer une.{% endif %}
+    </p>
+    <a href="{{ url_for('recipes.new') }}" class="btn btn-primary mt-4 rounded-full">+ Nouvelle recette</a>
+  </div>
+{% endif %}

@@ -1,0 +1,39 @@
+{# Une ligne d'ingrédient du formulaire. Ajout/suppression pilotés par HTMX seul. #}
+<div class="ing-row grid grid-cols-[1fr_5rem_7rem_2.5rem] items-center gap-2">
+  <input
+    type="text"
+    name="ing_name"
+    value="{{ row.name }}"
+    list="ingredient-names"
+    placeholder="Ingrédient"
+    class="input input-bordered w-full bg-base-100"
+    autocomplete="off"
+  />
+  <input
+    type="text"
+    name="ing_qty"
+    value="{{ row.qty }}"
+    inputmode="decimal"
+    placeholder="Qté"
+    class="input input-bordered w-full bg-base-100"
+  />
+  <input
+    type="text"
+    name="ing_unit"
+    value="{{ row.unit }}"
+    list="unit-names"
+    placeholder="unité"
+    class="input input-bordered w-full bg-base-100"
+    autocomplete="off"
+  />
+  <button
+    type="button"
+    class="btn btn-ghost btn-sm rounded-full text-lg"
+    hx-get="{{ url_for('recipes.empty_fragment') }}"
+    hx-target="closest .ing-row"
+    hx-swap="outerHTML"
+    aria-label="Supprimer la ligne"
+  >
+    ×
+  </button>
+</div>

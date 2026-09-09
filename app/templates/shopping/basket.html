@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Panier · popotte{% endblock %}
+
+{% block content %}
+  <div id="basket-page">
+    <h1 class="font-display text-3xl">Panier</h1>
+    <p class="pop-muted mb-5 mt-1 text-sm">
+      Ajustez les portions recette par recette, puis générez la liste.
+    </p>
+    {% include 'shopping/_basket_list.html' %}
+  </div>
+{% endblock %}

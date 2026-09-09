@@ -1,0 +1,72 @@
+{% if shopping_list is none %}
+  <div class="pop-card p-10 text-center">
+    <p class="font-display text-xl">Panier vide</p>
+    <p class="pop-muted mt-2 text-sm">Sélectionnez au moins une recette pour générer une liste.</p>
+    <a href="{{ url_for('recipes.list_recipes') }}" class="btn btn-primary mt-4 rounded-full"
+      >Parcourir les recettes</a
+    >
+  </div>
+{% else %}
+  {% set alerts = shopping_list.items | selectattr('needs_check') | list %}
+  <div class="mb-5">
+    <h1 class="font-display text-3xl">Liste de courses</h1>
+    <p class="pop-muted mt-1 text-sm">
+      {{ shopping_list.created_at.strftime('%d/%m/%Y à %H:%M') }} ·
+      {{ shopping_list.selections | length }} recette{{ 's' if shopping_list.selections | length > 1 }}
+    </p>
+    <div class="mt-2">{% include 'shopping/_progress.html' %}</div>
+  </div>
+
+  {% if shopping_list.selections %}
+    <div class="mb-5 flex flex-wrap gap-1.5">
+      {% for choice in shopping_list.selections %}
+        <a
+          href="{{ url_for('recipes.detail', recipe_id=choice.recipe_id, servings=choice.servings) }}"
+          class="rounded-full px-3 py-1 text-xs font-medium"
+          style="color: var(--pop-navy); background-color: color-mix(in srgb, var(--pop-navy) 10%, transparent)"
+          >{{ choice.recipe.title }} · {{ choice.servings }} pers.</a
+        >
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% if alerts %}
+    <div
+      class="mb-5 rounded-2xl p-4 text-sm"
+      style="color: var(--pop-alert); background-color: color-mix(in srgb, var(--pop-alert) 12%, transparent)"
+    >
+      <strong>{{ alerts | length }} ligne(s) à vérifier.</strong> Un même ingrédient apparaît avec des
+      unités non convertibles entre elles (ex. « 1 pincée » et « 5 g ») : les quantités sont affichées
+      séparément, sans être additionnées.
+    </div>
+  {% endif %}
+
+  <div class="space-y-4">
+    {% for group in groups %}
+      <section class="pop-card rayon-{{ group.color }} p-5">
+        <h2 class="rayon-title font-display flex items-center gap-2 text-lg">
+          <span class="rayon-dot inline-block h-2.5 w-2.5 rounded-full"></span>
+          {{ group.label }}
+          <span class="pop-muted ml-auto text-sm font-normal">{{ group.lines | length }}</span>
+        </h2>
+        <ul class="mt-2 divide-y" style="border-color: var(--pop-line)">
+          {% for item in group.lines %}{% include 'shopping/_item.html' %}{% endfor %}
+        </ul>
+      </section>
+    {% endfor %}
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-2">
+    <button
+      class="btn btn-ghost rounded-full border border-base-300"
+      hx-post="{{ url_for('shopping.reset_list', list_id=shopping_list.id) }}"
+      hx-target="#basket-page"
+      hx-swap="innerHTML"
+    >
+      Tout décocher
+    </button>
+    <a href="{{ url_for('shopping.basket') }}" class="btn btn-ghost rounded-full border border-base-300"
+      >Retour au panier</a
+    >
+  </div>
+{% endif %}

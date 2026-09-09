@@ -1,0 +1,50 @@
+{# Panneau ingrédients + ajusteur de portions (fragment HTMX rechargé à chaque ajustement) #}
+<div id="ingredients-panel" class="pop-card p-5">
+  <div class="flex items-center justify-between gap-3">
+    <h2 class="font-display text-xl">Ingrédients</h2>
+    <div class="flex items-center gap-1">
+      <button
+        class="btn btn-circle btn-sm btn-ghost border border-base-300 text-lg"
+        hx-get="{{ url_for('recipes.ingredients_fragment', recipe_id=recipe.id, servings=servings - 1) }}"
+        hx-target="#ingredients-panel"
+        hx-swap="outerHTML"
+        {{ 'disabled' if servings <= 1 }}
+        aria-label="Moins de portions"
+      >
+        −
+      </button>
+      <span class="w-24 text-center text-sm font-medium"
+        >{{ servings }} portion{{ 's' if servings > 1 }}</span
+      >
+      <button
+        class="btn btn-circle btn-sm btn-ghost border border-base-300 text-lg"
+        hx-get="{{ url_for('recipes.ingredients_fragment', recipe_id=recipe.id, servings=servings + 1) }}"
+        hx-target="#ingredients-panel"
+        hx-swap="outerHTML"
+        {{ 'disabled' if servings >= 50 }}
+        aria-label="Plus de portions"
+      >
+        +
+      </button>
+    </div>
+  </div>
+
+  {% if ratio != 1 %}
+    <p class="pop-muted mt-1 text-xs">
+      Quantités ajustées depuis {{ recipe.servings }} portion{{ 's' if recipe.servings > 1 }}
+    </p>
+  {% endif %}
+
+  <ul class="mt-4 divide-y" style="border-color: var(--pop-line)">
+    {% for item in recipe.items %}
+      <li class="flex items-baseline justify-between gap-4 py-2.5">
+        <span>{{ item.ingredient.name }}</span>
+        <span class="shrink-0 text-right text-sm font-medium">
+          {{ (item.quantity * ratio if item.quantity is not none else none) | scaled_amount(item.unit) }}
+        </span>
+      </li>
+    {% else %}
+      <li class="pop-muted py-3 text-sm">Aucun ingrédient saisi.</li>
+    {% endfor %}
+  </ul>
+</div>

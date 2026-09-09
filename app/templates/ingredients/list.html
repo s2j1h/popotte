@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Ingrédients · popotte{% endblock %}
+
+{% block content %}
+  <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <h1 class="font-display text-3xl">Ingrédients</h1>
+      <p class="pop-muted mt-1 text-sm">
+        Référentiel partagé : le rayon détermine le regroupement de la liste de courses.
+      </p>
+    </div>
+    <form class="w-full sm:w-64" method="get">
+      <input
+        type="search"
+        name="q"
+        value="{{ query }}"
+        placeholder="Chercher un ingrédient"
+        class="input input-bordered w-full rounded-full bg-base-100"
+      />
+    </form>
+  </div>
+
+  {% if unclassified %}
+    <div
+      class="mb-5 rounded-2xl p-4 text-sm"
+      style="color: var(--pop-alert); background-color: color-mix(in srgb, var(--pop-alert) 12%, transparent)"
+    >
+      <strong>{{ unclassified }} ingrédient(s) sans rayon.</strong> Attribuez-leur un rayon pour qu'ils
+      soient rangés au bon endroit dans la liste de courses.
+    </div>
+  {% endif %}
+
+  <div class="pop-card overflow-x-auto p-5">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="pop-muted text-left text-xs uppercase">
+          <th class="pb-2 pr-3 font-medium">Ingrédient</th>
+          <th class="pb-2 pr-3 font-medium">Unité par défaut</th>
+          <th class="pb-2 font-medium">Rayon</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ingredient in ingredients %}
+          {% with count = usage.get(ingredient.id, 0) %}
+            {% include 'ingredients/_row.html' %}
+          {% endwith %}
+        {% else %}
+          <tr>
+            <td colspan="3" class="pop-muted py-6 text-center">Aucun ingrédient.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <datalist id="unit-names">
+    {% for unit in UNIT_CHOICES %}{% if unit %}<option value="{{ unit }}"></option>{% endif %}{% endfor %}
+  </datalist>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block title %}{{ recipe.title }} · mode cuisine{% endblock %}
+
+{# Plein écran : ni barre de navigation, ni menu (design-UI.md §6) #}
+{% block chrome %}{% endblock %}
+{% block bottom_nav %}{% endblock %}
+
+{% block content %}{% include 'recipes/_cook_step.html' %}{% endblock %}

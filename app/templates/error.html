@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }} · popotte{% endblock %}
+
+{% block content %}
+  <div class="pop-card mx-auto max-w-md p-10 text-center">
+    <p class="font-display text-4xl">{{ code }}</p>
+    <p class="pop-muted mt-2 text-sm">{{ message }}</p>
+    <a href="{{ url_for('recipes.list_recipes') }}" class="btn btn-primary mt-5 rounded-full"
+      >Retour aux recettes</a
+    >
+  </div>
+{% endblock %}

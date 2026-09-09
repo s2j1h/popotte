@@ -1,0 +1,31 @@
+<li
+  class="flex items-center gap-3 py-3 {{ 'item-checked' if item.checked }} {{ 'item-alert' if item.needs_check }}"
+>
+  <input
+    type="checkbox"
+    class="pop-check"
+    {{ 'checked' if item.checked }}
+    hx-patch="{{ url_for('shopping.toggle_item', item_id=item.id) }}"
+    hx-target="closest li"
+    hx-swap="outerHTML"
+    aria-label="{{ item.ingredient.name }}"
+  />
+  <span class="item-label flex-1 text-lg">
+    {{ item.ingredient.name }}
+    {% if item.needs_check %}
+      <span class="ml-1 align-middle text-xs font-medium" style="color: var(--pop-alert)"
+        >à vérifier</span
+      >
+    {% endif %}
+  </span>
+  <span class="item-label shrink-0 text-lg font-semibold"
+    >{{ item.quantity_total | amount_of(item.unit) }}</span
+  >
+</li>
+
+{# après une coche, on rafraîchit aussi le compteur en haut de page #}
+{% if oob_progress %}
+  {% with shopping_list = item.shopping_list, oob = true %}
+    {% include 'shopping/_progress.html' %}
+  {% endwith %}
+{% endif %}

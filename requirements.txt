@@ -1,0 +1,4 @@
+Flask==3.1.0
+SQLAlchemy==2.0.52
+Pillow==11.0.0
+gunicorn==23.0.0

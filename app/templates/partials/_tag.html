@@ -1,0 +1,14 @@
+{# Badge pilule : teinte pâle de la couleur sémantique + texte en couleur pleine #}
+{% set flat = tag | lower %}
+{% if 'vég' in flat or 'veg' in flat or 'frais' in flat or 'saison' in flat %}
+  {% set color = 'var(--pop-sage)' %}
+{% elif 'rapide' in flat or 'express' in flat %}
+  {% set color = 'var(--pop-apricot)' %}
+{% else %}
+  {% set color = 'var(--pop-navy)' %}
+{% endif %}
+<span
+  class="rounded-full px-2.5 py-0.5 text-xs font-medium"
+  style="color: {{ color }}; background-color: color-mix(in srgb, {{ color }} 15%, transparent)"
+  >{{ tag }}</span
+>

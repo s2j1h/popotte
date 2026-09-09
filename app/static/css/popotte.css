@@ -1,0 +1,266 @@
+/* popotte — charte graphique (cf. design-UI.md)
+   Chargé APRÈS daisyUI : redéfinit le thème daisyUI avec la palette Popotte
+   et porte l'identité visuelle (polices, ombres, dégradés, mode cuisine).
+   Aucune couleur hors palette ne doit être ajoutée ici. */
+
+:root,
+[data-theme="popotte"] {
+  /* --- palette --- */
+  --pop-navy: #1c2541;
+  --pop-navy-deep: #141b30;
+  --pop-cream: #efeae0;
+  --pop-paper: #faf8f3;
+  --pop-apricot: #e8935a;
+  --pop-sage: #6b8f71;
+  --pop-alert: #b23b3b;
+  --pop-charbon: #232323;
+  --pop-muted: #737373;
+  --pop-line: rgba(28, 37, 65, 0.1);
+
+  /* --- thème daisyUI (variables v5) --- */
+  --color-base-100: var(--pop-paper); /* surfaces : cartes, panneaux */
+  --color-base-200: var(--pop-cream); /* fond général */
+  --color-base-300: #e3dccf;
+  --color-base-content: var(--pop-charbon);
+
+  --color-primary: var(--pop-apricot); /* LA couleur d'action */
+  --color-primary-content: #ffffff;
+  --color-secondary: var(--pop-navy); /* boutons structurels */
+  --color-secondary-content: var(--pop-cream);
+  --color-accent: var(--pop-sage);
+  --color-accent-content: var(--pop-paper);
+  --color-neutral: var(--pop-navy);
+  --color-neutral-content: var(--pop-cream);
+
+  --color-info: var(--pop-navy);
+  --color-info-content: var(--pop-cream);
+  --color-success: var(--pop-sage);
+  --color-success-content: var(--pop-paper);
+  --color-warning: var(--pop-apricot);
+  --color-warning-content: #ffffff;
+  --color-error: var(--pop-alert);
+  --color-error-content: var(--pop-paper);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 9999px; /* boutons et champs courts en pilule */
+  --radius-box: 1rem; /* cartes : coins généreux */
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+
+  color-scheme: light;
+}
+
+/* --- typographie : 2 familles, pas une de plus --- */
+html {
+  font-family: "Work Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  background-color: var(--pop-cream);
+  color: var(--pop-charbon);
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display,
+h1,
+h2,
+h3,
+.card-title {
+  font-family: "Fraunces", ui-serif, Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+h2,
+h3 {
+  font-weight: 600;
+}
+
+/* --- surfaces --- */
+.pop-shadow {
+  box-shadow: 0 1px 2px rgba(28, 37, 65, 0.04), 0 10px 28px -18px rgba(28, 37, 65, 0.35);
+}
+
+.pop-card {
+  background-color: var(--pop-paper);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(28, 37, 65, 0.04), 0 10px 28px -18px rgba(28, 37, 65, 0.35);
+}
+
+/* Formulaires longs : coins classiques plutôt que pilule (design-UI.md §5) */
+.form-long .input,
+.form-long .select,
+.form-long .textarea,
+.form-long textarea,
+.form-long input[type="text"],
+.form-long input[type="number"],
+.form-long input[type="file"] {
+  border-radius: 0.75rem;
+}
+.textarea,
+textarea {
+  border-radius: 0.75rem;
+}
+
+/* --- placeholders de photo : dégradés issus de la palette uniquement --- */
+.pop-thumb {
+  background-image: linear-gradient(135deg, var(--pop-cream), #e3dccf);
+}
+.pop-thumb-0 {
+  background-image: linear-gradient(135deg, #f3d9c4, #e8935a);
+}
+.pop-thumb-1 {
+  background-image: linear-gradient(135deg, #d7e2d8, #6b8f71);
+}
+.pop-thumb-2 {
+  background-image: linear-gradient(135deg, #d5d9e5, #1c2541);
+}
+.pop-thumb-3 {
+  background-image: linear-gradient(135deg, #efeae0, #c9b79c);
+}
+
+/* --- rayons : couleur sémantique par section de la liste de courses --- */
+.rayon-sage {
+  --rayon: var(--pop-sage);
+}
+.rayon-apricot {
+  --rayon: var(--pop-apricot);
+}
+.rayon-navy {
+  --rayon: var(--pop-navy);
+}
+.rayon-neutral {
+  --rayon: var(--pop-muted);
+}
+.rayon-title {
+  color: var(--rayon, var(--pop-navy));
+}
+.rayon-dot {
+  background-color: var(--rayon, var(--pop-navy));
+}
+.rayon-check {
+  accent-color: var(--rayon, var(--pop-navy));
+  border-color: var(--rayon, var(--pop-navy));
+}
+.item-alert {
+  --rayon: var(--pop-alert);
+}
+
+/* Article coché : barré et atténué, jamais retiré de la liste */
+.item-checked .item-label {
+  text-decoration: line-through;
+  opacity: 0.45;
+}
+
+/* --- checkbox liste de courses : gros tap-target, une main --- */
+.pop-check {
+  appearance: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  min-width: 1.75rem;
+  border: 2px solid var(--rayon, var(--pop-navy));
+  border-radius: 0.5rem;
+  background-color: var(--pop-paper);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.pop-check::after {
+  content: "";
+  width: 0.85rem;
+  height: 0.45rem;
+  border-left: 2.5px solid var(--pop-paper);
+  border-bottom: 2.5px solid var(--pop-paper);
+  transform: rotate(-45deg) translate(1px, -2px);
+  opacity: 0;
+}
+.pop-check:checked {
+  background-color: var(--rayon, var(--pop-navy));
+}
+.pop-check:checked::after {
+  opacity: 1;
+}
+
+/* --- mode cuisine : plein écran navy, lisible à distance --- */
+.cook-screen {
+  position: fixed;
+  inset: 0;
+  background-color: var(--pop-navy);
+  color: var(--pop-cream);
+  overflow-y: auto;
+  z-index: 60;
+}
+.cook-text {
+  font-family: "Fraunces", ui-serif, Georgia, serif;
+  font-weight: 500;
+  line-height: 1.35;
+  max-width: 26ch;
+  font-size: clamp(1.9rem, 5.2vw, 3.6rem);
+}
+.cook-round {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 9999px;
+  display: grid;
+  place-content: center;
+  font-size: 1.75rem;
+  border: 2px solid rgba(239, 234, 224, 0.35);
+  color: var(--pop-cream);
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+.cook-round:hover:not(:disabled) {
+  background-color: rgba(239, 234, 224, 0.12);
+}
+.cook-round:disabled {
+  opacity: 0.25;
+}
+.cook-round-primary {
+  background-color: var(--pop-apricot);
+  border-color: var(--pop-apricot);
+  color: #ffffff;
+}
+.cook-round-primary:hover:not(:disabled) {
+  background-color: #d9853f;
+}
+
+/* --- navigation --- */
+.pop-nav {
+  background-color: var(--pop-navy);
+  color: var(--pop-cream);
+}
+.pop-nav a {
+  color: rgba(239, 234, 224, 0.78);
+}
+.pop-nav a:hover,
+.pop-nav a.active {
+  color: var(--pop-cream);
+}
+.pop-bottom-nav {
+  background-color: var(--pop-navy-deep);
+  color: var(--pop-cream);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pop-bottom-nav a {
+  color: rgba(239, 234, 224, 0.65);
+}
+.pop-bottom-nav a.active {
+  color: var(--pop-apricot);
+}
+
+/* --- divers --- */
+.pop-muted {
+  color: var(--pop-muted);
+}
+.pop-prose {
+  max-width: 75ch;
+  line-height: 1.7;
+}
+.htmx-request .htmx-hide {
+  opacity: 0.4;
+}
+[hidden] {
+  display: none !important;
+}

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}{{ recipe.title }} · popotte{% endblock %}
+
+{% block content %}
+  <a href="{{ url_for('recipes.list_recipes') }}" class="pop-muted text-sm hover:underline">← Recettes</a>
+
+  <div class="mt-3 grid gap-6 lg:grid-cols-[1fr_22rem]">
+    <div>
+      <div class="pop-card overflow-hidden">
+        <div class="pop-thumb pop-thumb-{{ recipe.id % 4 }} h-44 w-full sm:h-60">
+          {% if recipe.photo_url %}
+            <img
+              src="{{ url_for('recipes.uploaded_photo', filename=recipe.photo_url) }}"
+              alt="{{ recipe.title }}"
+              class="h-full w-full object-cover"
+            />
+          {% endif %}
+        </div>
+
+        <div class="p-6">
+          <h1 class="font-display text-3xl leading-tight">{{ recipe.title }}</h1>
+          <p class="pop-muted mt-1.5 text-sm">
+            {{ recipe.servings }} portion{{ 's' if recipe.servings > 1 }}
+            {%- if recipe.prep_minutes %} · {{ recipe.prep_minutes }} min{% endif %}
+          </p>
+          {% if recipe.tag_list %}
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {% for tag in recipe.tag_list %}{% include 'partials/_tag.html' %}{% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="mt-5 flex flex-wrap items-center gap-2">
+            <a
+              href="{{ url_for('recipes.cook', recipe_id=recipe.id, servings=servings) }}"
+              class="btn btn-primary rounded-full"
+              >Mode cuisine</a
+            >
+            {% with in_selection = in_selection, style = 'detail' %}
+              {% include 'partials/_selection_button.html' %}
+            {% endwith %}
+            <a
+              href="{{ url_for('recipes.edit', recipe_id=recipe.id) }}"
+              class="btn btn-ghost rounded-full border border-base-300"
+              >Modifier</a
+            >
+            <button
+              class="btn btn-ghost rounded-full text-error"
+              hx-delete="{{ url_for('recipes.delete', recipe_id=recipe.id) }}"
+              hx-confirm="Supprimer définitivement « {{ recipe.title }} » ?"
+            >
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pop-card mt-6 p-6">
+        <h2 class="font-display text-xl">Préparation</h2>
+        <ol class="pop-prose mt-4 space-y-4">
+          {% for step in recipe.steps %}
+            <li class="flex gap-3">
+              <span
+                class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-semibold"
+                style="color: var(--pop-navy); background-color: color-mix(in srgb, var(--pop-navy) 12%, transparent)"
+                >{{ loop.index }}</span
+              >
+              <span>{{ step }}</span>
+            </li>
+          {% else %}
+            <li class="pop-muted text-sm">Aucune instruction saisie.</li>
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    <aside class="lg:sticky lg:top-24 lg:self-start">
+      {% include 'recipes/_ingredients.html' %}
+    </aside>
+  </div>
+{% endblock %}

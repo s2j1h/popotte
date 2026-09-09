@@ -1,0 +1,93 @@
+<div id="basket-list">
+  {% if pairs %}
+    <div class="space-y-3">
+      {% for recipe, servings in pairs %}
+        <div class="pop-card flex items-center gap-4 p-4">
+          <div class="pop-thumb pop-thumb-{{ recipe.id % 4 }} h-14 w-14 shrink-0 overflow-hidden rounded-xl">
+            {% if recipe.photo_url %}
+              <img
+                src="{{ url_for('recipes.uploaded_photo', filename=recipe.photo_url) }}"
+                alt=""
+                class="h-full w-full object-cover"
+              />
+            {% endif %}
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <a href="{{ url_for('recipes.detail', recipe_id=recipe.id) }}" class="font-medium hover:underline"
+              >{{ recipe.title }}</a
+            >
+            <p class="pop-muted text-xs">
+              Recette prévue pour {{ recipe.servings }} portion{{ 's' if recipe.servings > 1 }}
+            </p>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <button
+              class="btn btn-circle btn-sm btn-ghost border border-base-300 text-lg"
+              hx-post="{{ url_for('shopping.update_servings', recipe_id=recipe.id) }}"
+              hx-vals='{"delta": -1}'
+              hx-target="#basket-list"
+              hx-swap="outerHTML"
+              {{ 'disabled' if servings <= 1 }}
+              aria-label="Moins de portions"
+            >
+              −
+            </button>
+            <span class="w-16 text-center text-sm font-medium">{{ servings }} pers.</span>
+            <button
+              class="btn btn-circle btn-sm btn-ghost border border-base-300 text-lg"
+              hx-post="{{ url_for('shopping.update_servings', recipe_id=recipe.id) }}"
+              hx-vals='{"delta": 1}'
+              hx-target="#basket-list"
+              hx-swap="outerHTML"
+              aria-label="Plus de portions"
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            class="btn btn-ghost btn-sm rounded-full text-lg"
+            hx-post="{{ url_for('shopping.remove_from_selection', recipe_id=recipe.id) }}"
+            hx-target="#basket-list"
+            hx-swap="outerHTML"
+            aria-label="Retirer du panier"
+          >
+            ×
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="mt-6 flex flex-wrap items-center gap-3">
+      <button
+        class="btn btn-primary rounded-full"
+        hx-post="{{ url_for('shopping.generate') }}"
+        hx-target="#basket-page"
+        hx-swap="innerHTML"
+      >
+        Générer la liste de courses
+      </button>
+      <button
+        class="btn btn-ghost rounded-full"
+        hx-post="{{ url_for('shopping.clear_selection') }}"
+        hx-target="#basket-list"
+        hx-swap="outerHTML"
+        hx-confirm="Vider le panier ?"
+      >
+        Vider le panier
+      </button>
+    </div>
+  {% else %}
+    <div class="pop-card p-10 text-center">
+      <p class="font-display text-xl">Panier vide</p>
+      <p class="pop-muted mt-2 text-sm">
+        Sélectionnez des recettes pour composer votre liste de courses.
+      </p>
+      <a href="{{ url_for('recipes.list_recipes') }}" class="btn btn-primary mt-4 rounded-full"
+        >Parcourir les recettes</a
+      >
+    </div>
+  {% endif %}
+</div>
