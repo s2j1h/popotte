@@ -12,6 +12,9 @@ voulu, et l'application produit une liste de courses agrégée : les mêmes ingr
 sont additionnés, les unités compatibles converties (g/kg, ml/cl/l), et le résultat
 est trié par rayon de magasin.
 
+<img width="2304" height="1126" alt="image" src="https://github.com/user-attachments/assets/15cd81c5-0a4b-40e7-81b4-daa3e0b2be16" />
+
+
 ## Fonctionnalités
 
 - **Recettes** : titre, portions, durée, tags, photo, ingrédients quantifiés, étapes
