@@ -14,6 +14,7 @@ est trié par rayon de magasin.
 
 <img width="2304" height="1126" alt="image" src="https://github.com/user-attachments/assets/15cd81c5-0a4b-40e7-81b4-daa3e0b2be16" />
 
+> Note : cette application a été développée avec Claude Code et relue/vérifiée par un humain (tests fonctionnels manuels de toutes les routes : CRUD, recherche, paniers, ...). Comme pour tout code généré assisté par IA, une relecture reste recommandée avant toute exposition au-delà d'un usage personnel en réseau local.
 
 ## Fonctionnalités
 
